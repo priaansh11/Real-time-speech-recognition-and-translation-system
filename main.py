@@ -1,11 +1,11 @@
 import speech_recognition as sr
 from googletrans import Translator
 
-# Initialize recognizer and translator
-r = sr.Recognizer()
-translator = Translator()
+def recognize_and_translate(language_code='hi'):  # Default language is Hindi
+    print(f"Received language code in recognize_and_translate: {language_code}")
+    r = sr.Recognizer()
+    translator = Translator()
 
-def recognize_and_translate():
     with sr.Microphone() as source:
         print("Speak now!")
         audio = r.listen(source)
@@ -14,16 +14,14 @@ def recognize_and_translate():
             speech_text = r.recognize_google(audio)
             print("You said: " + speech_text)
             
-            # Translate the recognized speech to Hindi
-            translated_text = translator.translate(speech_text, dest='hi').text
+            # Translate the recognized speech to the selected language
+            translated_text = translator.translate(speech_text, dest=language_code).text
             print("Translated Text: " + translated_text)
-            return speech_text, translated_text
+            
+            return {'speech_text': speech_text, 'translated_text': translated_text}
         except sr.UnknownValueError:
-            print("Could not understand")
-            return None, None
+            return {'speech_text': '', 'translated_text': '', 'error': 'Could not understand'}
         except sr.RequestError:
-            print("Could not request result from Google")
-            return None, None
+            return {'speech_text': '', 'translated_text': '', 'error': 'Could not request result from Google'}
         except Exception as e:
-            print("Error occurred: " + str(e))
-            return None, None
+            return {'speech_text': '', 'translated_text': '', 'error': str(e)}
